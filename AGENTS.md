@@ -35,6 +35,8 @@ Ao implementar uma tarefa:
 * Não altere arquivos fora do escopo da tarefa.
 * Prefira soluções simples.
 * Explique sempre quais arquivos foram modificados.
+* Para cada alteração e arquivo criado na API, gere testes unitários validando as mudanças.
+* Commits só podem ser feitos se nenhum teste unitário estiver quebrado.
 
 ---
 
