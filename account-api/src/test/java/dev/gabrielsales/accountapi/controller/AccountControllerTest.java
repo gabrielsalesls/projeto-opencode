@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,5 +40,19 @@ class AccountControllerTest {
 
         assertSame(expectedResponse, actualResponse);
         verify(accountService).create(request);
+    }
+
+    @Test
+    @DisplayName("getById should delegate to service and return response")
+    void getById_should_callServiceAndReturnResponse_when_validId() {
+        var accountId = UUID.randomUUID();
+        var expectedResponse = new AccountResponse(accountId, "Jane Doe", new BigDecimal("100.00"), LocalDateTime.now());
+
+        when(accountService.findById(accountId)).thenReturn(expectedResponse);
+
+        AccountResponse actualResponse = accountController.getById(accountId);
+
+        assertSame(expectedResponse, actualResponse);
+        verify(accountService).findById(accountId);
     }
 }

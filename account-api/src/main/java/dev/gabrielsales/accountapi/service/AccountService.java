@@ -4,7 +4,9 @@ import dev.gabrielsales.accountapi.dto.AccountResponse;
 import dev.gabrielsales.accountapi.dto.CreateAccountRequest;
 import dev.gabrielsales.accountapi.entity.Account;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,5 +29,11 @@ public class AccountService {
 
         var saved = accountRepository.save(account);
         return AccountResponse.fromEntity(saved);
+    }
+
+    public AccountResponse findById(UUID id) {
+        var account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        return AccountResponse.fromEntity(account);
     }
 }

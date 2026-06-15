@@ -5,6 +5,9 @@ import dev.gabrielsales.accountapi.dto.CreateAccountRequest;
 import dev.gabrielsales.accountapi.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import java.util.UUID;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +28,10 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public AccountResponse create(@Valid @RequestBody CreateAccountRequest request) {
         return accountService.create(request);
+    }
+
+    @GetMapping("/{id}")
+    public AccountResponse getById(@PathVariable UUID id) {
+        return accountService.findById(id);
     }
 }
