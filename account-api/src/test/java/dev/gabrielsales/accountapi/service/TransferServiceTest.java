@@ -65,19 +65,20 @@ class TransferServiceTest {
 
         when(accountRepository.findById(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
         when(accountRepository.findById(destinationAccountId)).thenReturn(Optional.of(destinationAccount));
-        when(accountRepository.save(any(Account.class))).thenReturn(any(Account.class));
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(transferRepository.save(any(Transfer.class))).thenReturn(savedTransfer);
 
         transferService.transfer(sourceAccountId, destinationAccountId, amount);
 
         assertAll(
                 () -> assertEquals(sourceBalance.subtract(amount), sourceAccount.getBalance()),
-                () -> assertEquals(destinationBalance.add(amount), destinationAccount.getBalance()),
-                () -> assertEquals(2, accountRepository.save.callCount)
+                () -> assertEquals(destinationBalance.add(amount), destinationAccount.getBalance())
         );
 
         verify(accountRepository).findById(sourceAccountId);
         verify(accountRepository).findById(destinationAccountId);
+        verify(accountRepository).save(sourceAccount);
+        verify(accountRepository).save(destinationAccount);
         verify(transferRepository).save(any(Transfer.class));
     }
 

@@ -1,0 +1,10 @@
+{
+  "version": "1",
+  "name": "Account API",
+  "type": "collection",
+  "items": [
+    { "name": "Create Account", "request": "Create Account.bru" },
+    { "name": "Get Account", "request": "Get Account.bru" },
+    { "name": "Transfer", "request": "Transfer.bru" }
+  ]
+}
