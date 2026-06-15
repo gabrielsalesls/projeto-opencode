@@ -1,10 +1,10 @@
-package dev.gabrielsales.banking;
+package dev.gabrielsales.accountapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BankingApplicationTests {
+class AccountApiApplicationTests {
 
 	@Test
 	void contextLoads() {
