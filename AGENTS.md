@@ -56,6 +56,15 @@ Meta:
 
 * Preferencialmente menos de 300 linhas alteradas por commit.
 
+Padrão:
+
+* Commits semânticos: `tipo: mensagem`
+* Tipos: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `style`
+* Exemplos:
+  * `feat: add docker-compose with PostgreSQL and RabbitMQ`
+  * `fix: correct account balance calculation`
+  * `chore: update AGENTS.md with commit convention`
+
 ---
 
 ## Tecnologias
