@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: outbox-worker
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/banking
+    username: banking
+    password: banking
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
