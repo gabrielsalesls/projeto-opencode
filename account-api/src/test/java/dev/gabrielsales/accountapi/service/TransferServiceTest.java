@@ -1,12 +1,15 @@
 package dev.gabrielsales.accountapi.service;
 
 import dev.gabrielsales.accountapi.entity.Account;
+import dev.gabrielsales.accountapi.entity.OutboxEvent;
 import dev.gabrielsales.accountapi.entity.Transfer;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
+import dev.gabrielsales.accountapi.repository.OutboxEventRepository;
 import dev.gabrielsales.accountapi.repository.TransferRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +33,9 @@ class TransferServiceTest {
 
     @Mock
     private TransferRepository transferRepository;
+
+    @Mock
+    private OutboxEventRepository outboxEventRepository;
 
     @InjectMocks
     private TransferService transferService;
@@ -67,6 +73,7 @@ class TransferServiceTest {
         when(accountRepository.findByIdWithLock(destinationAccountId)).thenReturn(Optional.of(destinationAccount));
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(transferRepository.save(any(Transfer.class))).thenReturn(savedTransfer);
+        when(outboxEventRepository.save(any(OutboxEvent.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         transferService.transfer(sourceAccountId, destinationAccountId, amount);
 
@@ -79,6 +86,17 @@ class TransferServiceTest {
         verify(accountRepository).save(sourceAccount);
         verify(accountRepository).save(destinationAccount);
         verify(transferRepository).save(any(Transfer.class));
+
+        var captor = ArgumentCaptor.forClass(OutboxEvent.class);
+        verify(outboxEventRepository).save(captor.capture());
+        var savedEvent = captor.getValue();
+        assertEquals("TRANSFER_CREATED", savedEvent.getEventType());
+        assertFalse(savedEvent.isProcessed());
+        assertNotNull(savedEvent.getPayload());
+        assertTrue(savedEvent.getPayload().contains("\"transferId\""));
+        assertTrue(savedEvent.getPayload().contains("\"sourceAccountId\""));
+        assertTrue(savedEvent.getPayload().contains("\"destinationAccountId\""));
+        assertTrue(savedEvent.getPayload().contains("\"amount\""));
     }
 
     @Test
@@ -96,6 +114,7 @@ class TransferServiceTest {
         verify(accountRepository).findByIdWithLock(sourceAccountId);
         verify(accountRepository, never()).findByIdWithLock(destinationAccountId);
         verify(transferRepository, never()).save(any(Transfer.class));
+        verify(outboxEventRepository, never()).save(any(OutboxEvent.class));
     }
 
     @Test
@@ -120,6 +139,7 @@ class TransferServiceTest {
         verify(accountRepository).findByIdWithLock(sourceAccountId);
         verify(accountRepository).findByIdWithLock(destinationAccountId);
         verify(transferRepository, never()).save(any(Transfer.class));
+        verify(outboxEventRepository, never()).save(any(OutboxEvent.class));
     }
 
     @Test
@@ -151,5 +171,6 @@ class TransferServiceTest {
         verify(accountRepository).findByIdWithLock(sourceAccountId);
         verify(accountRepository).findByIdWithLock(destinationAccountId);
         verify(transferRepository, never()).save(any(Transfer.class));
+        verify(outboxEventRepository, never()).save(any(OutboxEvent.class));
     }
 }

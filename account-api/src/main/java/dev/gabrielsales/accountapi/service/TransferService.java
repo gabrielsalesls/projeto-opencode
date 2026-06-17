@@ -1,8 +1,10 @@
 package dev.gabrielsales.accountapi.service;
 
 import dev.gabrielsales.accountapi.entity.Account;
+import dev.gabrielsales.accountapi.entity.OutboxEvent;
 import dev.gabrielsales.accountapi.entity.Transfer;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
+import dev.gabrielsales.accountapi.repository.OutboxEventRepository;
 import dev.gabrielsales.accountapi.repository.TransferRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,13 @@ public class TransferService {
 
     private final AccountRepository accountRepository;
     private final TransferRepository transferRepository;
+    private final OutboxEventRepository outboxEventRepository;
 
-    public TransferService(AccountRepository accountRepository, TransferRepository transferRepository) {
+    public TransferService(AccountRepository accountRepository, TransferRepository transferRepository,
+                           OutboxEventRepository outboxEventRepository) {
         this.accountRepository = accountRepository;
         this.transferRepository = transferRepository;
+        this.outboxEventRepository = outboxEventRepository;
     }
 
     @Transactional
@@ -64,5 +69,19 @@ public class TransferService {
         transfer.setCreatedAt(LocalDateTime.now());
 
         transferRepository.save(transfer);
+
+        var outboxEvent = new OutboxEvent();
+        outboxEvent.setId(UUID.randomUUID());
+        outboxEvent.setEventType("TRANSFER_CREATED");
+        outboxEvent.setPayload(
+                "{\"sourceAccountId\":\"" + sourceAccountId
+                + "\",\"destinationAccountId\":\"" + destinationAccountId
+                + "\",\"amount\":" + amount
+                + ",\"transferId\":\"" + transfer.getId() + "\"}"
+        );
+        outboxEvent.setProcessed(false);
+        outboxEvent.setCreatedAt(LocalDateTime.now());
+
+        outboxEventRepository.save(outboxEvent);
     }
 }
