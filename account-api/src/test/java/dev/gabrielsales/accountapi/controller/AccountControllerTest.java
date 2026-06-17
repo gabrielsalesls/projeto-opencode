@@ -2,6 +2,7 @@ package dev.gabrielsales.accountapi.controller;
 
 import dev.gabrielsales.accountapi.dto.AccountResponse;
 import dev.gabrielsales.accountapi.dto.CreateAccountRequest;
+import dev.gabrielsales.accountapi.dto.DepositRequest;
 import dev.gabrielsales.accountapi.service.AccountService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,5 +55,20 @@ class AccountControllerTest {
 
         assertSame(expectedResponse, actualResponse);
         verify(accountService).findById(accountId);
+    }
+
+    @Test
+    @DisplayName("deposit should delegate to service and return response")
+    void deposit_should_callServiceAndReturnResponse_when_validRequest() {
+        var accountId = UUID.randomUUID();
+        var request = new DepositRequest(new BigDecimal("50.00"));
+        var expectedResponse = new AccountResponse(accountId, "John Doe", new BigDecimal("150.00"), LocalDateTime.now());
+
+        when(accountService.deposit(eq(accountId), any(BigDecimal.class))).thenReturn(expectedResponse);
+
+        AccountResponse actualResponse = accountController.deposit(accountId, request);
+
+        assertSame(expectedResponse, actualResponse);
+        verify(accountService).deposit(accountId, new BigDecimal("50.00"));
     }
 }

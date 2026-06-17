@@ -1,7 +1,9 @@
 package dev.gabrielsales.accountapi.controller;
 
 import dev.gabrielsales.accountapi.dto.AccountResponse;
+import dev.gabrielsales.accountapi.dto.BalanceResponse;
 import dev.gabrielsales.accountapi.dto.CreateAccountRequest;
+import dev.gabrielsales.accountapi.dto.DepositRequest;
 import dev.gabrielsales.accountapi.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -33,5 +35,15 @@ public class AccountController {
     @GetMapping("/{id}")
     public AccountResponse getById(@PathVariable UUID id) {
         return accountService.findById(id);
+    }
+
+    @PostMapping("/{id}/deposit")
+    public AccountResponse deposit(@PathVariable UUID id, @Valid @RequestBody DepositRequest request) {
+        return accountService.deposit(id, request.amount());
+    }
+
+    @GetMapping("/{id}/balance")
+    public BalanceResponse getBalance(@PathVariable UUID id) {
+        return accountService.getBalance(id);
     }
 }

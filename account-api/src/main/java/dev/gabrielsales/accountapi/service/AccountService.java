@@ -1,6 +1,7 @@
 package dev.gabrielsales.accountapi.service;
 
 import dev.gabrielsales.accountapi.dto.AccountResponse;
+import dev.gabrielsales.accountapi.dto.BalanceResponse;
 import dev.gabrielsales.accountapi.dto.CreateAccountRequest;
 import dev.gabrielsales.accountapi.entity.Account;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
@@ -35,5 +36,20 @@ public class AccountService {
         var account = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
         return AccountResponse.fromEntity(account);
+    }
+
+    public AccountResponse deposit(UUID id, BigDecimal amount) {
+        var account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+        account.setBalance(account.getBalance().add(amount));
+        var saved = accountRepository.save(account);
+        return AccountResponse.fromEntity(saved);
+    }
+
+    public BalanceResponse getBalance(UUID id) {
+        var account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        return BalanceResponse.fromEntity(account);
     }
 }
