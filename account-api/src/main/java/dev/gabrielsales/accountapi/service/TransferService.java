@@ -6,6 +6,7 @@ import dev.gabrielsales.accountapi.repository.AccountRepository;
 import dev.gabrielsales.accountapi.repository.TransferRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,12 +23,28 @@ public class TransferService {
         this.transferRepository = transferRepository;
     }
 
+    @Transactional
     public void transfer(UUID sourceAccountId, UUID destinationAccountId, BigDecimal amount) {
-        var sourceAccount = accountRepository.findById(sourceAccountId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Source account not found"));
+        var ids = java.util.stream.Stream.of(sourceAccountId, destinationAccountId)
+                .sorted()
+                .toList();
 
-        var destinationAccount = accountRepository.findById(destinationAccountId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Destination account not found"));
+        var firstAccount = accountRepository.findByIdWithLock(ids.get(0))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+        var secondAccount = accountRepository.findByIdWithLock(ids.get(1))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+        Account sourceAccount;
+        Account destinationAccount;
+
+        if (sourceAccountId.equals(firstAccount.getId())) {
+            sourceAccount = firstAccount;
+            destinationAccount = secondAccount;
+        } else {
+            sourceAccount = secondAccount;
+            destinationAccount = firstAccount;
+        }
 
         if (sourceAccount.getBalance().compareTo(amount) < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance");

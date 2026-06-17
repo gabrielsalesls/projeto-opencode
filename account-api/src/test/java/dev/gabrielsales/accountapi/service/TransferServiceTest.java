@@ -37,8 +37,8 @@ class TransferServiceTest {
     @Test
     @DisplayName("transfer should debit source account, credit destination account, and save transfer when valid")
     void transfer_should_debitSourceCreditDestinationAndSaveTransfer_when_valid() {
-        var sourceAccountId = UUID.randomUUID();
-        var destinationAccountId = UUID.randomUUID();
+        var sourceAccountId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        var destinationAccountId = UUID.fromString("00000000-0000-0000-0000-000000000002");
         var amount = new BigDecimal("100.00");
         var sourceBalance = new BigDecimal("500.00");
         var destinationBalance = new BigDecimal("200.00");
@@ -63,8 +63,8 @@ class TransferServiceTest {
         savedTransfer.setAmount(amount);
         savedTransfer.setCreatedAt(LocalDateTime.now());
 
-        when(accountRepository.findById(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(destinationAccountId)).thenReturn(Optional.of(destinationAccount));
+        when(accountRepository.findByIdWithLock(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdWithLock(destinationAccountId)).thenReturn(Optional.of(destinationAccount));
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(transferRepository.save(any(Transfer.class))).thenReturn(savedTransfer);
 
@@ -75,8 +75,7 @@ class TransferServiceTest {
                 () -> assertEquals(destinationBalance.add(amount), destinationAccount.getBalance())
         );
 
-        verify(accountRepository).findById(sourceAccountId);
-        verify(accountRepository).findById(destinationAccountId);
+        verify(accountRepository, times(2)).findByIdWithLock(any(UUID.class));
         verify(accountRepository).save(sourceAccount);
         verify(accountRepository).save(destinationAccount);
         verify(transferRepository).save(any(Transfer.class));
@@ -85,25 +84,25 @@ class TransferServiceTest {
     @Test
     @DisplayName("transfer should throw 404 when source account not found")
     void transfer_should_throw404_when_sourceAccountNotFound() {
-        var sourceAccountId = UUID.randomUUID();
-        var destinationAccountId = UUID.randomUUID();
+        var sourceAccountId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        var destinationAccountId = UUID.fromString("00000000-0000-0000-0000-000000000002");
         var amount = new BigDecimal("100.00");
 
-        when(accountRepository.findById(sourceAccountId)).thenReturn(Optional.empty());
+        when(accountRepository.findByIdWithLock(sourceAccountId)).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class,
                 () -> transferService.transfer(sourceAccountId, destinationAccountId, amount));
 
-        verify(accountRepository).findById(sourceAccountId);
-        verify(accountRepository, never()).findById(destinationAccountId);
+        verify(accountRepository).findByIdWithLock(sourceAccountId);
+        verify(accountRepository, never()).findByIdWithLock(destinationAccountId);
         verify(transferRepository, never()).save(any(Transfer.class));
     }
 
     @Test
     @DisplayName("transfer should throw 404 when destination account not found")
     void transfer_should_throw404_when_destinationAccountNotFound() {
-        var sourceAccountId = UUID.randomUUID();
-        var destinationAccountId = UUID.randomUUID();
+        var sourceAccountId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        var destinationAccountId = UUID.fromString("00000000-0000-0000-0000-000000000002");
         var amount = new BigDecimal("100.00");
 
         var sourceAccount = new Account();
@@ -112,22 +111,22 @@ class TransferServiceTest {
         sourceAccount.setBalance(new BigDecimal("500.00"));
         sourceAccount.setCreatedAt(LocalDateTime.now());
 
-        when(accountRepository.findById(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(destinationAccountId)).thenReturn(Optional.empty());
+        when(accountRepository.findByIdWithLock(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdWithLock(destinationAccountId)).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class,
                 () -> transferService.transfer(sourceAccountId, destinationAccountId, amount));
 
-        verify(accountRepository).findById(sourceAccountId);
-        verify(accountRepository).findById(destinationAccountId);
+        verify(accountRepository).findByIdWithLock(sourceAccountId);
+        verify(accountRepository).findByIdWithLock(destinationAccountId);
         verify(transferRepository, never()).save(any(Transfer.class));
     }
 
     @Test
     @DisplayName("transfer should throw 400 when source account has insufficient balance")
     void transfer_should_throw400_when_insufficientBalance() {
-        var sourceAccountId = UUID.randomUUID();
-        var destinationAccountId = UUID.randomUUID();
+        var sourceAccountId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        var destinationAccountId = UUID.fromString("00000000-0000-0000-0000-000000000002");
         var amount = new BigDecimal("100.00");
         var sourceBalance = new BigDecimal("50.00");
 
@@ -143,14 +142,14 @@ class TransferServiceTest {
         destinationAccount.setBalance(new BigDecimal("200.00"));
         destinationAccount.setCreatedAt(LocalDateTime.now());
 
-        when(accountRepository.findById(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(destinationAccountId)).thenReturn(Optional.of(destinationAccount));
+        when(accountRepository.findByIdWithLock(sourceAccountId)).thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdWithLock(destinationAccountId)).thenReturn(Optional.of(destinationAccount));
 
         assertThrows(ResponseStatusException.class,
                 () -> transferService.transfer(sourceAccountId, destinationAccountId, amount));
 
-        verify(accountRepository).findById(sourceAccountId);
-        verify(accountRepository).findById(destinationAccountId);
+        verify(accountRepository).findByIdWithLock(sourceAccountId);
+        verify(accountRepository).findByIdWithLock(destinationAccountId);
         verify(transferRepository, never()).save(any(Transfer.class));
     }
 }

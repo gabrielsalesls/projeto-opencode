@@ -7,6 +7,7 @@ import dev.gabrielsales.accountapi.entity.Account;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,8 +39,9 @@ public class AccountService {
         return AccountResponse.fromEntity(account);
     }
 
+    @Transactional
     public AccountResponse deposit(UUID id, BigDecimal amount) {
-        var account = accountRepository.findById(id)
+        var account = accountRepository.findByIdWithLock(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         account.setBalance(account.getBalance().add(amount));

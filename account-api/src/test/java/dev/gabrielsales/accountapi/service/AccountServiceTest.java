@@ -103,7 +103,7 @@ class AccountServiceTest {
         account.setBalance(new BigDecimal("100.00"));
         account.setCreatedAt(LocalDateTime.now());
 
-        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
+        when(accountRepository.findByIdWithLock(accountId)).thenReturn(Optional.of(account));
 
         var amount = new BigDecimal("50.00");
         var savedAccount = new Account();
@@ -123,7 +123,7 @@ class AccountServiceTest {
                 () -> assertNotNull(response.createdAt())
         );
 
-        verify(accountRepository).findById(accountId);
+        verify(accountRepository).findByIdWithLock(accountId);
         verify(accountRepository).save(account);
     }
 
@@ -132,12 +132,12 @@ class AccountServiceTest {
     void deposit_should_throw404_when_accountNotFound() {
         var accountId = UUID.randomUUID();
 
-        when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
+        when(accountRepository.findByIdWithLock(accountId)).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class,
                 () -> accountService.deposit(accountId, new BigDecimal("50.00")));
 
-        verify(accountRepository).findById(accountId);
+        verify(accountRepository).findByIdWithLock(accountId);
         verify(accountRepository, never()).save(any());
     }
 }
