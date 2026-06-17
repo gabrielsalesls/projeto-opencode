@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="dev.gabrielsales.outboxworker.OutboxWorkerApplicationTests" time="6.036" tests="1" errors="0" skipped="0" failures="0" flakes="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="dev.gabrielsales.outboxworker.service.OutboxWorkerServiceTest" time="0.247" tests="2" errors="0" skipped="0" failures="0" flakes="0">
   <properties>
     <property name="java.specification.version" value="24"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -67,53 +67,10 @@
     <property name="java.class.version" value="68.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[outbox-worker] "/>
   </properties>
-  <testcase name="contextLoads" classname="dev.gabrielsales.outboxworker.OutboxWorkerApplicationTests" time="0.712">
-    <system-out><![CDATA[18:45:53.310 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [dev.gabrielsales.outboxworker.OutboxWorkerApplicationTests]: OutboxWorkerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-18:45:53.471 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration dev.gabrielsales.outboxworker.OutboxWorkerApplication for test class dev.gabrielsales.outboxworker.OutboxWorkerApplicationTests
-18:45:53.572 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [dev.gabrielsales.outboxworker.OutboxWorkerApplicationTests]: OutboxWorkerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-18:45:53.574 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration dev.gabrielsales.outboxworker.OutboxWorkerApplication for test class dev.gabrielsales.outboxworker.OutboxWorkerApplicationTests
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::                (v4.1.0)
-
-2026-06-17T18:45:54.179-03:00  INFO 9156 --- [outbox-worker] [           main] d.g.o.OutboxWorkerApplicationTests       : Starting OutboxWorkerApplicationTests using Java 24.0.2 with PID 9156 (started by Sales in C:\Users\Sales\develop\projeto-opencode\outbox-worker)
-2026-06-17T18:45:54.181-03:00  INFO 9156 --- [outbox-worker] [           main] d.g.o.OutboxWorkerApplicationTests       : No active profile set, falling back to 1 default profile: "default"
-2026-06-17T18:45:54.915-03:00  INFO 9156 --- [outbox-worker] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-06-17T18:45:54.991-03:00  INFO 9156 --- [outbox-worker] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 61 ms. Found 1 JPA repository interface.
-2026-06-17T18:45:55.430-03:00  INFO 9156 --- [outbox-worker] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-06-17T18:45:55.527-03:00  INFO 9156 --- [outbox-worker] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
-2026-06-17T18:45:56.170-03:00  INFO 9156 --- [outbox-worker] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-06-17T18:45:56.230-03:00  INFO 9156 --- [outbox-worker] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-06-17T18:45:56.534-03:00  INFO 9156 --- [outbox-worker] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
-2026-06-17T18:45:56.538-03:00  INFO 9156 --- [outbox-worker] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-06-17T18:45:56.628-03:00  INFO 9156 --- [outbox-worker] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [jdbc:h2:mem:testdb]
-	Database driver: H2 JDBC Driver
-	Database dialect: H2Dialect
-	Database version: 2.4.240
-	Default catalog/schema: TESTDB/PUBLIC
-	Autocommit mode: undefined/unknown
-	Isolation level: READ_COMMITTED [default READ_COMMITTED]
-	JDBC fetch size: 100
-	Pool: DataSourceConnectionProvider
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-06-17T18:45:57.799-03:00  INFO 9156 --- [outbox-worker] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-06-17T18:45:57.842-03:00  INFO 9156 --- [outbox-worker] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-06-17T18:45:57.960-03:00  INFO 9156 --- [outbox-worker] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-06-17T18:45:58.362-03:00  INFO 9156 --- [outbox-worker] [           main] d.g.o.OutboxWorkerApplicationTests       : Started OutboxWorkerApplicationTests in 4.706 seconds (process running for 6.245)
+  <testcase name="processPendingEvents_shouldLogEachEvent_when_eventsExist" classname="dev.gabrielsales.outboxworker.service.OutboxWorkerServiceTest" time="0.24">
+    <system-out><![CDATA[2026-06-17T18:45:59.327-03:00  INFO 9156 --- [outbox-worker] [           main] d.g.o.service.OutboxWorkerService        : Found 1 pending outbox events
+2026-06-17T18:45:59.328-03:00  INFO 9156 --- [outbox-worker] [           main] d.g.o.service.OutboxWorkerService        : Processing event - id: c7bfdd9b-8553-407a-8f80-6d56e00fa42a, type: TRANSFER_CREATED, payload: {}
 ]]></system-out>
-    <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
-WARNING: A Java agent has been loaded dynamically (C:\Users\Sales\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-]]></system-err>
   </testcase>
+  <testcase name="processPendingEvents_shouldDoNothing_when_noPendingEvents" classname="dev.gabrielsales.outboxworker.service.OutboxWorkerServiceTest" time="0.003"/>
 </testsuite>

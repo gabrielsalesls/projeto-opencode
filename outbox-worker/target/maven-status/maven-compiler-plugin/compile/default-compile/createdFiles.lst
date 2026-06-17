@@ -1,1 +1,4 @@
+dev\gabrielsales\outboxworker\repository\OutboxEventRepository.class
+dev\gabrielsales\outboxworker\entity\OutboxEvent.class
 dev\gabrielsales\outboxworker\OutboxWorkerApplication.class
+dev\gabrielsales\outboxworker\service\OutboxWorkerService.class
