@@ -3,6 +3,10 @@ package dev.gabrielsales.outboxworker.publisher;
 import dev.gabrielsales.outboxworker.entity.OutboxEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.charset.StandardCharsets;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +22,14 @@ public class OutboxEventPublisher {
     }
 
     public void publish(OutboxEvent event) {
-        rabbitTemplate.convertAndSend("transfer-events", event.getPayload());
+        Message message = MessageBuilder
+                .withBody(event.getPayload().getBytes(StandardCharsets.UTF_8))
+                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+                .setMessageId(event.getId().toString())
+                .setType(event.getEventType())
+                .build();
+
+        rabbitTemplate.send("transfer-events", message);
         log.info("Published event {} to transfer-events queue", event.getId());
     }
 }

@@ -6,8 +6,10 @@ import dev.gabrielsales.notificationapi.entity.Notification;
 import dev.gabrielsales.notificationapi.repository.NotificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,8 +27,16 @@ public class TransferEventConsumer {
     }
 
     @RabbitListener(queues = "transfer-events")
-    public void consume(String payload) {
-        log.info("Received event from transfer-events: {}", payload);
+    public void consume(Message message) {
+        String messageId = message.getMessageProperties().getMessageId();
+        String payload = new String(message.getBody(), StandardCharsets.UTF_8);
+
+        log.info("Received event from transfer-events: messageId={}, payload={}", messageId, payload);
+
+        if (messageId != null && notificationRepository.existsByEventId(messageId)) {
+            log.warn("Duplicate event ignored: messageId={}", messageId);
+            return;
+        }
 
         try {
             JsonNode json = objectMapper.readTree(payload);
@@ -37,6 +47,7 @@ public class TransferEventConsumer {
             notification.setAccountId(accountId);
             notification.setMessage(payload);
             notification.setCreatedAt(LocalDateTime.now());
+            notification.setEventId(messageId != null ? messageId : UUID.randomUUID().toString());
 
             notificationRepository.save(notification);
 

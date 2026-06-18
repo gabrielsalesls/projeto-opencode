@@ -32,9 +32,13 @@ public class OutboxWorkerService {
         log.info("Found {} pending outbox events", events.size());
 
         for (var event : events) {
-            outboxEventPublisher.publish(event);
-            event.setProcessed(true);
-            outboxEventRepository.save(event);
+            try {
+                outboxEventPublisher.publish(event);
+                event.setProcessed(true);
+                outboxEventRepository.save(event);
+            } catch (Exception e) {
+                log.error("Failed to process outbox event {}", event.getId(), e);
+            }
         }
     }
 }

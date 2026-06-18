@@ -1,2 +1,3 @@
 dev\gabrielsales\outboxworker\OutboxWorkerApplicationTests.class
 dev\gabrielsales\outboxworker\service\OutboxWorkerServiceTest.class
+dev\gabrielsales\outboxworker\publisher\OutboxEventPublisherTest.class
