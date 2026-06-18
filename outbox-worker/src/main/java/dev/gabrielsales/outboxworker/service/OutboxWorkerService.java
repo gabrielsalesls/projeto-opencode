@@ -33,6 +33,8 @@ public class OutboxWorkerService {
 
         for (var event : events) {
             outboxEventPublisher.publish(event);
+            event.setProcessed(true);
+            outboxEventRepository.save(event);
         }
     }
 }

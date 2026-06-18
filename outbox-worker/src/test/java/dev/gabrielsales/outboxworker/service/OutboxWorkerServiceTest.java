@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +45,8 @@ class OutboxWorkerServiceTest {
 
         verify(outboxEventRepository).findByProcessedFalse();
         verify(outboxEventPublisher).publish(event);
+        verify(outboxEventRepository).save(event);
+        assertTrue(event.isProcessed());
     }
 
     @Test
@@ -55,5 +58,6 @@ class OutboxWorkerServiceTest {
 
         verify(outboxEventRepository).findByProcessedFalse();
         verify(outboxEventPublisher, never()).publish(any());
+        verify(outboxEventRepository, never()).save(any());
     }
 }
