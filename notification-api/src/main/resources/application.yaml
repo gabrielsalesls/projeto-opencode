@@ -2,6 +2,17 @@ spring:
   application:
     name: notification-api
 
+  datasource:
+    url: jdbc:postgresql://localhost:5433/banking
+    username: banking
+    password: banking
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
   rabbitmq:
     host: localhost
     port: 5672
