@@ -5,6 +5,8 @@ import dev.gabrielsales.accountapi.dto.BalanceResponse;
 import dev.gabrielsales.accountapi.dto.CreateAccountRequest;
 import dev.gabrielsales.accountapi.entity.Account;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.util.UUID;
 
 @Service
 public class AccountService {
+
+    private static final Logger log = LoggerFactory.getLogger(AccountService.class);
 
     private final AccountRepository accountRepository;
 
@@ -30,6 +34,9 @@ public class AccountService {
         account.setCreatedAt(LocalDateTime.now());
 
         var saved = accountRepository.save(account);
+
+        log.info("Account created: accountId={}, ownerName={}", saved.getId(), saved.getOwnerName());
+
         return AccountResponse.fromEntity(saved);
     }
 

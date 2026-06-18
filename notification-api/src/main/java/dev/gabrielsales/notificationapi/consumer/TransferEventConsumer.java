@@ -31,7 +31,7 @@ public class TransferEventConsumer {
         String messageId = message.getMessageProperties().getMessageId();
         String payload = new String(message.getBody(), StandardCharsets.UTF_8);
 
-        log.info("Received event from transfer-events: messageId={}, payload={}", messageId, payload);
+        log.info("Event received from RabbitMQ: messageId={}, queue={}", messageId, "transfer-events");
 
         if (messageId != null && notificationRepository.existsByEventId(messageId)) {
             log.warn("Duplicate event ignored: messageId={}", messageId);
@@ -51,9 +51,10 @@ public class TransferEventConsumer {
 
             notificationRepository.save(notification);
 
-            log.info("Notification saved for account {}", accountId);
+            log.info("Notification created: notificationId={}, accountId={}, messageId={}",
+                    notification.getId(), accountId, messageId);
         } catch (Exception e) {
-            log.error("Failed to process event: {}", payload, e);
+            log.error("Failed to process event: messageId={}, payload={}", messageId, payload, e);
         }
     }
 }

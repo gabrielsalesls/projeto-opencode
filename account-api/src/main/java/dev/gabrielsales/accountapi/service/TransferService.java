@@ -6,6 +6,8 @@ import dev.gabrielsales.accountapi.entity.Transfer;
 import dev.gabrielsales.accountapi.repository.AccountRepository;
 import dev.gabrielsales.accountapi.repository.OutboxEventRepository;
 import dev.gabrielsales.accountapi.repository.TransferRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,8 @@ import java.util.UUID;
 
 @Service
 public class TransferService {
+
+    private static final Logger log = LoggerFactory.getLogger(TransferService.class);
 
     private final AccountRepository accountRepository;
     private final TransferRepository transferRepository;
@@ -30,6 +34,9 @@ public class TransferService {
 
     @Transactional
     public void transfer(UUID sourceAccountId, UUID destinationAccountId, BigDecimal amount) {
+        log.info("Transfer initiated: sourceAccountId={}, destinationAccountId={}, amount={}",
+                sourceAccountId, destinationAccountId, amount);
+
         var ids = java.util.stream.Stream.of(sourceAccountId, destinationAccountId)
                 .sorted()
                 .toList();
@@ -52,6 +59,8 @@ public class TransferService {
         }
 
         if (sourceAccount.getBalance().compareTo(amount) < 0) {
+            log.warn("Transfer rejected: sourceAccountId={}, balance={}, amount={}",
+                    sourceAccountId, sourceAccount.getBalance(), amount);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance");
         }
 
@@ -83,5 +92,8 @@ public class TransferService {
         outboxEvent.setCreatedAt(LocalDateTime.now());
 
         outboxEventRepository.save(outboxEvent);
+
+        log.info("Transfer completed: transferId={}, sourceAccountId={}, destinationAccountId={}, amount={}, outboxEventId={}",
+                transfer.getId(), sourceAccountId, destinationAccountId, amount, outboxEvent.getId());
     }
 }

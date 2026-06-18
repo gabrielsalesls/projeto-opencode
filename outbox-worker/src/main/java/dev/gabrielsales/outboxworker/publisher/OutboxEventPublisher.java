@@ -30,6 +30,8 @@ public class OutboxEventPublisher {
                 .build();
 
         rabbitTemplate.send("transfer-events", message);
-        log.info("Published event {} to transfer-events queue", event.getId());
+
+        log.info("Event published to RabbitMQ: outboxEventId={}, eventType={}, queue={}",
+                event.getId(), event.getEventType(), "transfer-events");
     }
 }
