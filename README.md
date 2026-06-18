@@ -1,3 +1,7 @@
+# Sobre o projeto
+
+Este repositório contém um projeto desenvolvido integralmente via vibecoding com o OpenCode, utilizando principalmente a LLM DeepSeek V4. O objetivo é validar a capacidade do agente em gerar código na versão gratuita da plataforma.
+
 # Account API
 
 API de contas bancárias com suporte a transferências entre contas.
