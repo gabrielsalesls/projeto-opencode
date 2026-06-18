@@ -1,6 +1,7 @@
 package dev.gabrielsales.outboxworker.service;
 
 import dev.gabrielsales.outboxworker.entity.OutboxEvent;
+import dev.gabrielsales.outboxworker.publisher.OutboxEventPublisher;
 import dev.gabrielsales.outboxworker.repository.OutboxEventRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,15 @@ class OutboxWorkerServiceTest {
     @Mock
     private OutboxEventRepository outboxEventRepository;
 
+    @Mock
+    private OutboxEventPublisher outboxEventPublisher;
+
     @InjectMocks
     private OutboxWorkerService outboxWorkerService;
 
     @Test
-    @DisplayName("processPendingEvents should log each pending event when events exist")
-    void processPendingEvents_shouldLogEachEvent_when_eventsExist() {
+    @DisplayName("processPendingEvents should publish each pending event when events exist")
+    void processPendingEvents_shouldPublishEachEvent_when_eventsExist() {
         var event = new OutboxEvent();
         event.setId(UUID.randomUUID());
         event.setEventType("TRANSFER_CREATED");
@@ -39,6 +43,7 @@ class OutboxWorkerServiceTest {
         outboxWorkerService.processPendingEvents();
 
         verify(outboxEventRepository).findByProcessedFalse();
+        verify(outboxEventPublisher).publish(event);
     }
 
     @Test
@@ -49,5 +54,6 @@ class OutboxWorkerServiceTest {
         outboxWorkerService.processPendingEvents();
 
         verify(outboxEventRepository).findByProcessedFalse();
+        verify(outboxEventPublisher, never()).publish(any());
     }
 }

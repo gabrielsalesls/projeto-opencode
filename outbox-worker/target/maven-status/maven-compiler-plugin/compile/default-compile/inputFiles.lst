@@ -1,4 +1,6 @@
+C:\Users\Sales\develop\projeto-opencode\outbox-worker\src\main\java\dev\gabrielsales\outboxworker\config\RabbitMQConfig.java
 C:\Users\Sales\develop\projeto-opencode\outbox-worker\src\main\java\dev\gabrielsales\outboxworker\entity\OutboxEvent.java
 C:\Users\Sales\develop\projeto-opencode\outbox-worker\src\main\java\dev\gabrielsales\outboxworker\OutboxWorkerApplication.java
+C:\Users\Sales\develop\projeto-opencode\outbox-worker\src\main\java\dev\gabrielsales\outboxworker\publisher\OutboxEventPublisher.java
 C:\Users\Sales\develop\projeto-opencode\outbox-worker\src\main\java\dev\gabrielsales\outboxworker\repository\OutboxEventRepository.java
 C:\Users\Sales\develop\projeto-opencode\outbox-worker\src\main\java\dev\gabrielsales\outboxworker\service\OutboxWorkerService.java

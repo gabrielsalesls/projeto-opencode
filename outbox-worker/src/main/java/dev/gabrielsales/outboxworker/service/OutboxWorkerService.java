@@ -1,5 +1,6 @@
 package dev.gabrielsales.outboxworker.service;
 
+import dev.gabrielsales.outboxworker.publisher.OutboxEventPublisher;
 import dev.gabrielsales.outboxworker.repository.OutboxEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,12 @@ public class OutboxWorkerService {
     private static final Logger log = LoggerFactory.getLogger(OutboxWorkerService.class);
 
     private final OutboxEventRepository outboxEventRepository;
+    private final OutboxEventPublisher outboxEventPublisher;
 
-    public OutboxWorkerService(OutboxEventRepository outboxEventRepository) {
+    public OutboxWorkerService(OutboxEventRepository outboxEventRepository,
+                               OutboxEventPublisher outboxEventPublisher) {
         this.outboxEventRepository = outboxEventRepository;
+        this.outboxEventPublisher = outboxEventPublisher;
     }
 
     @Scheduled(fixedDelay = 5000)
@@ -28,8 +32,7 @@ public class OutboxWorkerService {
         log.info("Found {} pending outbox events", events.size());
 
         for (var event : events) {
-            log.info("Processing event - id: {}, type: {}, payload: {}",
-                    event.getId(), event.getEventType(), event.getPayload());
+            outboxEventPublisher.publish(event);
         }
     }
 }

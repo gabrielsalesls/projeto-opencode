@@ -1,4 +1,6 @@
-dev\gabrielsales\outboxworker\repository\OutboxEventRepository.class
+dev\gabrielsales\outboxworker\config\RabbitMQConfig.class
 dev\gabrielsales\outboxworker\entity\OutboxEvent.class
+dev\gabrielsales\outboxworker\publisher\OutboxEventPublisher.class
 dev\gabrielsales\outboxworker\OutboxWorkerApplication.class
 dev\gabrielsales\outboxworker\service\OutboxWorkerService.class
+dev\gabrielsales\outboxworker\repository\OutboxEventRepository.class
