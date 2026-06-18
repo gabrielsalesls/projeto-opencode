@@ -43,9 +43,21 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/banking
       SPRING_DATASOURCE_USERNAME: banking
       SPRING_DATASOURCE_PASSWORD: banking
+      OTEL_SERVICE_NAME: account-api
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      JAVA_TOOL_OPTIONS: "-javaagent:/otel/opentelemetry-javaagent.jar"
+    volumes:
+      - ./opentelemetry-javaagent.jar:/otel/opentelemetry-javaagent.jar:ro
     depends_on:
       postgresql:
         condition: service_healthy
+    networks:
+      - default
+      - observability-net
     restart: unless-stopped
 
   outbox-worker:
@@ -61,11 +73,23 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: banking
       SPRING_RABBITMQ_PASSWORD: banking
+      OTEL_SERVICE_NAME: outbox-worker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      JAVA_TOOL_OPTIONS: "-javaagent:/otel/opentelemetry-javaagent.jar"
+    volumes:
+      - ./opentelemetry-javaagent.jar:/otel/opentelemetry-javaagent.jar:ro
     depends_on:
       postgresql:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - default
+      - observability-net
     restart: unless-stopped
 
   notification-api:
@@ -81,12 +105,28 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: banking
       SPRING_RABBITMQ_PASSWORD: banking
+      OTEL_SERVICE_NAME: notification-api
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      JAVA_TOOL_OPTIONS: "-javaagent:/otel/opentelemetry-javaagent.jar"
+    volumes:
+      - ./opentelemetry-javaagent.jar:/otel/opentelemetry-javaagent.jar:ro
     depends_on:
       postgresql:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - default
+      - observability-net
     restart: unless-stopped
 
 volumes:
   pgdata:
+
+networks:
+  observability-net:
+    external: true
