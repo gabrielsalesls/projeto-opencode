@@ -11,6 +11,11 @@ services:
       POSTGRES_DB: banking
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banking"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:4-management
@@ -21,6 +26,67 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: banking
       RABBITMQ_DEFAULT_PASS: banking
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  account-api:
+    build:
+      context: ./account-api
+      dockerfile: Dockerfile
+    container_name: banking-account-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/banking
+      SPRING_DATASOURCE_USERNAME: banking
+      SPRING_DATASOURCE_PASSWORD: banking
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  outbox-worker:
+    build:
+      context: ./outbox-worker
+      dockerfile: Dockerfile
+    container_name: banking-outbox-worker
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/banking
+      SPRING_DATASOURCE_USERNAME: banking
+      SPRING_DATASOURCE_PASSWORD: banking
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: banking
+      SPRING_RABBITMQ_PASSWORD: banking
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notification-api:
+    build:
+      context: ./notification-api
+      dockerfile: Dockerfile
+    container_name: banking-notification-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/banking
+      SPRING_DATASOURCE_USERNAME: banking
+      SPRING_DATASOURCE_PASSWORD: banking
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: banking
+      SPRING_RABBITMQ_PASSWORD: banking
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   pgdata:
